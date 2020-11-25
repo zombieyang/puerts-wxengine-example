@@ -1,0 +1,46 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const ShellPool_1 = require("src/Shell/ShellPool");
+class TankShooting extends PuertsLogic {
+    constructor() {
+        super(...arguments);
+        //private bool m_Fired;                       // Whether or not the shell has been launched with this button press.
+        this.m_Shell = null;
+        this.lastT = new Date;
+        this.m_ShellInstanceList = [];
+    }
+    OnEnable() {
+        // When the tank is turned on, reset the launch force and the UI
+        this.m_CurrentLaunchForce = this.behaviour.m_MinLaunchForce;
+        //m_AimSlider.value = m_MinLaunchForce;
+        PuertsBeefBallSDK.load(this.behaviour.m_ShellPath)
+            .then((prefab) => {
+            CS.UnityEngine.Debug.Log(!!prefab);
+            this.m_Shell = prefab;
+        });
+    }
+    Start() {
+        // The fire axis is based on the player number.
+        this.m_FireButton = "Fire" + this.behaviour.m_PlayerNumber;
+        // The rate that the launch force charges up is the range of possible forces by the max charge time.
+        this.m_ChargeSpeed = (this.behaviour.m_MaxLaunchForce - this.behaviour.m_MinLaunchForce) / this.behaviour.m_MaxChargeTime;
+    }
+    Update() {
+        var time = new Date;
+        var dt = (time.getTime() - this.lastT.getTime()) / 1000;
+        if (dt >= this.behaviour.m_FireInterval && this.m_Shell != null) {
+            this.Fire();
+            this.lastT = time;
+        }
+    }
+    Fire() {
+        //// Set the fired flag so only Fire is only called once.
+        //m_Fired = true;
+        var shellInstance = ShellPool_1.default.Create(this.m_Shell, this.behaviour.m_FireTransform.transform.position, this.behaviour.m_FireTransform.transform.rotation);
+        var shell = shellInstance.GetComponent(puerts.$typeof(CS.PuertsTest.ShellExplosion));
+        shell.Reset();
+        shell.m_PhyWorld = this.behaviour.m_PhyWorld;
+        shell.m_PlayerNumber = this.behaviour.m_PlayerNumber;
+    }
+}
+exports.default = TankShooting;

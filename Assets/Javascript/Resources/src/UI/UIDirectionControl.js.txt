@@ -1,0 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class UIDirectionControl extends PuertsLogic {
+    Start() {
+        this.m_RelativeRotation = this.behaviour.transform.parent.localRotation;
+    }
+    Update() {
+        if (this.behaviour.m_UseRelativeRotation)
+            this.behaviour.transform.rotation = this.m_RelativeRotation;
+    }
+}
+exports.default = UIDirectionControl;

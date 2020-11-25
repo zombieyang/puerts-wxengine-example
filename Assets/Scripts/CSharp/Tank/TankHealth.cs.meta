@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 18e9d34211c294fc0a564ba1c8f5018c
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - slider: {instanceID: 0}
+  - bar: {instanceID: 0}
+  - steamParticles: {instanceID: 0}
+  - explosionParticles: {fileID: 19874418, guid: 6bc6d0dd8b8428e4ca316513f2cf13c6,
+      type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

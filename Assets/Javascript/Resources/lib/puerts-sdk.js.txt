@@ -1,0 +1,74 @@
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+class PuertsLogic {
+    constructor(behaviour) {
+        this.behaviour = behaviour;
+        this.behaviour.JsStart = () => this.Start();
+        this.behaviour.JsUpdate = () => {
+            // if (this.monoBehaviour.name == "Player1") {
+            //     csharp.UnityEngine.Debug.Log(this.monoBehaviour.JSClassName);
+            // }
+            this.Update();
+        };
+        this.behaviour.JsAwake = () => this.Awake();
+        this.behaviour.JsOnDestroy = () => this.OnDestroy();
+        this.behaviour.JsOnDisable = () => this.OnDisable();
+        this.behaviour.JsOnEnable = () => this.OnEnable();
+        this.behaviour.jsBehaviour = this;
+    }
+    Start() { }
+    Update() { }
+    Awake() { }
+    OnDestroy() { }
+    OnDisable() { }
+    OnEnable() { }
+}
+var PuertsBeefBallSDK;
+(function (PuertsBeefBallSDK) {
+    function load(path) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let resourcepath = '';
+            if (typeof path !== 'string') {
+                resourcepath = path.resourcePath;
+            }
+            else {
+                resourcepath = path;
+            }
+            // 在unity里加载，要求资源必须是在resources目录下的资源
+            // 且传入的参数得是resources目录后的路径，所以要预先处理一下传入的path
+            if (resourcepath.toLowerCase().indexOf("resources") == -1) {
+                return Promise.reject(new Error(`加载资源"${path}"时失败：资源路径不包含resources，无法加载`));
+            }
+            const reg = resourcepath.split(/resources\//i);
+            resourcepath = reg[reg.length - 1];
+            resourcepath = resourcepath.slice(0, resourcepath.lastIndexOf("."));
+            const result = CS.UnityEngine.Resources.Load(resourcepath);
+            if (result instanceof CS.UnityEngine.GameObject) {
+                return Promise.resolve(new PuertsBeefBallSDK.Prefab(result));
+            }
+            return Promise.resolve(result);
+        });
+    }
+    PuertsBeefBallSDK.load = load;
+    class Prefab {
+        constructor(gameObject) {
+            this.gameObject = gameObject;
+        }
+        Instantiate() {
+            return CS.UnityEngine.GameObject
+                .Instantiate(this.gameObject);
+        }
+    }
+    PuertsBeefBallSDK.Prefab = Prefab;
+})(PuertsBeefBallSDK || (PuertsBeefBallSDK = {}));
+global.CS = require('csharp');
+global.puerts = require('puerts');
+global.PuertsLogic = PuertsLogic;
+global.PuertsBeefBallSDK = PuertsBeefBallSDK;

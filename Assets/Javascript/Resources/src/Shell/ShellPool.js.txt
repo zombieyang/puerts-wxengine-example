@@ -1,0 +1,27 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class ShellPool {
+    static Create(original, position, rotation) {
+        if (ShellPool.m_freeShellList.length == 0) {
+            var gameObject = original.Instantiate();
+            gameObject.transform.position = position;
+            gameObject.transform.rotation = rotation;
+            gameObject.SetActive(true);
+            return gameObject;
+        }
+        else {
+            var gameObject = ShellPool.m_freeShellList[ShellPool.m_freeShellList.length - 1];
+            ShellPool.m_freeShellList.pop( /*ShellPool.m_freeShellList.length - 1*/);
+            gameObject.SetActive(true);
+            gameObject.transform.position = position;
+            gameObject.transform.rotation = rotation;
+            return gameObject;
+        }
+    }
+    static Destroy(gameObject) {
+        gameObject.SetActive(false);
+        ShellPool.m_freeShellList.push(gameObject);
+    }
+}
+exports.default = ShellPool;
+ShellPool.m_freeShellList = [];
